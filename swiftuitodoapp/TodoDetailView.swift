@@ -13,6 +13,8 @@ struct TodoDetailView: View {
     @State private var is_completed:Bool = false;
     @ObservedObject var vm:TodoViewModel;
     
+    @Environment(\.presentationMode) var presentationMode;
+    
     var body: some View {
         Form{
             Section("Edit Todo - \(todo.title)"){
@@ -25,13 +27,13 @@ struct TodoDetailView: View {
                     
                     Button("Save"){
                         vm.update(idx: todo.id, newTitle: value, is_completed: is_completed)
+                        self.presentationMode.wrappedValue.dismiss()
                     }.foregroundColor(value == todo.title && is_completed == todo.is_completed ? Color.gray : Color.green)
                         .disabled(value == todo.title && is_completed == todo.is_completed)
                     Button("Cancel"){
-                        
+                        self.presentationMode.wrappedValue.dismiss()
                     }.foregroundColor(Color.red)
                 }
-                
             }
         }.onAppear(){
             value = self.todo.title
