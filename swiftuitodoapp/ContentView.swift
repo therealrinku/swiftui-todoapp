@@ -12,7 +12,7 @@ struct ContentView: View {
     @State var value:String = ""
     
     var body: some View {
-        NavigationView{
+        NavigationStack{
             VStack{
                 if vm.todos.isEmpty{
                     Spacer()
@@ -25,20 +25,16 @@ struct ContentView: View {
                         Text("Todos").bold()
                         List(){
                             ForEach(vm.todos){ todo in
-                                NavigationLink(destination: TodoDetailView(todo:todo, vm: vm)){
+                                NavigationLink(value: todo){
                                     Text(todo.title)
-                                        .onTapGesture {
-                                            vm.fiddle(idx: todo.id)
-                                        }
-                                        .foregroundColor(
-                                        todo.is_completed ?
-                                        Color.gray : Color.black)
-                                        .onLongPressGesture {
-                                        vm.removeTodo(idx: todo.id)
-                                    }
+                                        .onTapGesture { vm.fiddle(idx: todo.id) }
+                                        .foregroundColor( todo.is_completed ? Color.gray : Color.black)
+                                        .onLongPressGesture { vm.removeTodo(idx: todo.id) }
                                 }
                             }
                         }
+                    }.navigationDestination(for: TodoModel.self){ todo in
+                        TodoDetailView(todo: todo, vm: vm)
                     }
                 }
                 
@@ -46,10 +42,7 @@ struct ContentView: View {
                 
                 HStack{
                     TextField("New Todo", text: $value)
-                    
-                    Button(action: addTodo){
-                        Text("Add todo")
-                    }
+                    Button(action: addTodo){ Text("Add todo") }
                 }.padding()
             }
             
